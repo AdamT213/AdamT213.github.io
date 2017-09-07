@@ -1,0 +1,21 @@
+# Site settings
+title: My Journey
+header-img: img/home-bg.png
+email: adt6261@gmail.com
+copyright_name: AdamT213
+description: > # this means to ignore newlines until "baseurl:"
+  From Student to Coder
+baseurl: "" # the subpath of your site, e.g. /blog
+twitter_username: 
+github_username:  AdamT213
+learn_profile: AdamT213
+email_username: adt6261@gmail.com
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+paginate: 5
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
+
+gems: [jekyll-paginate, jekyll-feed]
