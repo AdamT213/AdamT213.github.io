@@ -1,7 +1,7 @@
 ---
 layout: post
 title:      "CS 100.3: Linked Lists"
-date:       2018-04-05 06:11:31 +0000
+date:       2018-04-05 02:11:31 -0400
 permalink:  cs_100_3_linked_lists
 ---
 
