@@ -1,0 +1,54 @@
+---
+layout: post
+title:      "CS 100.5: Sorting Part 2"
+date:       2018-04-11 19:16:46 +0000
+permalink:  cs_100_5_sorting_part_2
+---
+
+
+Before we begin, I did in fact butcher the quote from yesterday. Mr Dimopolous actually said 
+"Jumping from failure to failure with undiminished enthusiasm is the big secret to success" 
+See, way more poetic. Now, onto topics of substance. 
+
+As promised, merge sort is a much better algorithm than the previous two. In the worst case, it runs in O(n log n) time. One important thing to note is that merge sort is a recursive algorithm, with a "merge" step that gets called repeatedly. It works by maintaining 3 queues, 2 sorted queues with inputs and 1 empty, to begin with. At each step, the smaller of the two first values in the sorted queues (and therefore the current min), is moved from its current position to the end of the third queue. Once one queue is empty, the remaining non-empty one is concatenated to the end of the third queue. The trick, then, is ensuring that the input queues are always sorted. Again, we rely on the fact that a list of length 1 is, by definition, sorted. So, we take our input list and break it down into smaller and smaller pieces, until eventually, we are left with n lists of length 1. We then recursively sort and merge these lists until we are once again left with one list of length n. This is easier to see in practice, so let's say we had a list containing 5,4,9,2,11,13,17,6. The first step is to divide it into two lists, consisting of 5,4,9,2 and 11,13,17,6, respectively. This process is repeated, until we are left with individual lists of 5,4,9,2,11,13,17, and 6. We then go back up the recursion tree, merging the lists in the same fashion. The first merge step yields four lists, 4,5, 2,9, 11,13 and 6,17. The second step yields 2,4,5,9, and 6,11,13,17, and the rest is clear to see. The pseudocode for this procedure is below. 
+
+function mergesort(array, low, high) 
+    middle = (low + high)/2 
+		mergesort(array, low, middle) 
+		mergesort(array,  middle + 1, high) 
+		merge(array, low, middle, middle + 1, high) 
+		
+It is easy to see why this algorithm runs in n log n time, since there are log n levels of recursion, and at each level, n work is done (at most). However, it is worth noting that merge sort is not in place for arrays, since another array must be maintained to hold the results of the merging steps. This inefficiency leads us to quicksort, which is the best sorting algorithm for arrays, and the one that, as a beginner, you should presume to use, unless you know of  a good reason not to. 
+
+Quick sort is also n log n, however, because the constant amount of work is less, it is significantly faster than mergesort. It works by partitioning the list around a given element, such that every element to its left is less than the partition, and every element to the right is greater. It is best to choose the partition element randomly, and in practice, this is often done by shuffling the list and choosing the first element to be the partition. We then keep a pointer to the low element, i.e., the element one to the right of the partition (let's call the pointer i), and the high element, i.e. the last element (we'll call this one j). We increment i until we come across a value that is greater than the partition, then increment j until we come across an element that is less than the partition. We swap these elements, then repeat this process of incrementing, decrementing, and swapping, until the pointers cross, or one hits the opposite end, signaling that the list is successfully partitioned. We recursively repeat this partitioning step until the entire list is sorted. You may notice that, while merge sort recurses, then performs the sorting, quick sort performs the sorting, then recurses (this is a great thing to be aware of and point out in interviews). It is also worth noting that, if the partition happened to be chosen such that all the items were on one side of it, the algorithm would actually run in n^2 time in the worst case, MUCH worse than merge sort. However, the random choice of a partition almost guarantees that this will never happen, so the average case is markedly better. Quick sort is difficult to show in a written example, but here is the pseudocode to help better understand the process. 
+
+function partition(array, lo, hi) 
+    i = lo 
+		j = hi + 1 
+		while true 
+		    while array[i] < array[lo]
+				    i++ 
+				    if i == hi 
+						    break 
+				while array[j] > array[lo] 
+				    j-- 
+	      if i >= j 
+				    swap(array, i, j) 
+  swap(array, lo, j) 
+	return j 
+	
+function quicksort(array, lo, hi) 
+    if hi <= lo return 
+		j = partition(array, lo, hi) 
+	 quicksort(array, lo, j-1) 
+	 quicksort(array, j+1, hi)  
+	 
+PHEW! That's a lot of sorting. Make sure you understand how these two algorithms work; they are both important and a good exercise in recursion. Try to implement them yourself, in your language of choice. And study up on a few of the other important sorting algorithms as well, such as heap sort and bucket sort. 
+
+With that, I leave you with some words of wisdom, the source of which I cannot confirm:
+
+"Hold strong opinions weakly." 
+
+Til next time. Thanks!
+				
+		
