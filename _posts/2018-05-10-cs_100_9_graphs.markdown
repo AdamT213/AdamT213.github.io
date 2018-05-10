@@ -1,0 +1,115 @@
+---
+layout: post
+title:      "CS 100.9: Graphs"
+date:       2018-05-10 08:15:34 +0000
+permalink:  cs_100_9_graphs
+---
+
+
+As promised, the follow-up to our discussion of trees: graphs. Of course, we are all familiar with what a graph is. For those that have taken discrete mathematics in some form (not me!), you probably even have a sense of the specific definition of a graph and the different kinds. For those have taken graph theory, skip this blog post, it will bore you (Just kidding, don't do that). Nonetheless, it is important to hone in on exactly what a graph is as a CS data structure, because graphs are illustrative of many important CS principles, and can be used to solve many different problems.  
+
+First, a definition: A graph G =(V,E) is the set of vertices and edges connecting those vertices, each edge consisting of an ordered or unordered pair of vertices. As stated in the post on trees, in a non-technical-theory-explaining-context, we would typically refer to these as lines and points, as for example, the myriad graphs we all drew in our math classes. Graphs can be directed or undirected. In  an undirected graph, every edge (x,y) also works in the reverse, i.e. (y,x) is also an edge. Not so in directed graphs, where each edge goes in only one direction. We touched on this last week when talking about trees, which, as you may recall, are directed. However, when thinking about graphs in the context of interview problems, you should focus more of your energy on undirected graphs; they are more common and more useful. 
+
+Graphs can also be weighted or unweighted. In a weighted graph, each edge can have an integer value denoting something of importance. For example, in a network of roads, each one can have a speed limit, a vital piece of information for finding the quickest path between two points in the network (sidenote: finding the shortest path between vertices is one of the fundamental applications of graphs, and many of the algorithms we will mention today deal with a variation of this problem). In an unweighted graph, each edge and vertex is not made distinct from any other. 
+
+Another point to revisit from the post on trees is the idea of an acyclic graph. A graph is acyclic if (DUH!) it has no cycles, in other words, there is no way to traverse from one vertex back to itself along a set of edges, whereas cyclic graphs have one or more of such cycles. As a point of clarification, I mentioned last week that trees are directed acyclic graphs, but I have since come to learn that is not entirely true. As a data structure, trees can be considered directed because they have a root node and can (usually) only be traversed in one direction. But in general graph theory, a tree is any undirected connected graph. Don't worry too much about this distinction when programming, think of trees as directed. 
+
+Another important feature of graphs is that they can be sparse or dense, sparse meaning that each vertex is connected to relatively few other vertices, and dense meaning that each vertex is connected to relatively many other vertices. Exactly what qualifies a graph as sparse or dense is a matter of some contention, but as a general rule, if there is a roughly linear relationship between vertices and edges, the graph is sparse, and if there is a roughly quadratic relationship between the number of vertices and edges, it is dense. In a connected graph where there can be a maximum of one edge between a pair of vertices, the maximum number of edges is v^2-v (convince yourself of this if you don't believe me), so it is easy to see why this would be considered dense. Among the various algorithms for graph traversal, some are more efficient with sparse graphs, and some with dense graphs, so it is important to understand the distinction. Also note that most real world problems are more naturally modeled as sparse graphs. 
+
+Okay, that's enough general graph theory. There are plenty of other distinctions, kinds, and flavors of graphs, but if you want to learn about them, TAKE A FRICKIN GRAPH THEORY CLASS! Just kidding, but such an in-depth understanding is definitely beyond the scope of this post. Just a bit about how computers represent graphs as a data structure(understanding this WILL help you), then we can talk about the thing you came here for: graph algorithms and how to apply them in interview questions. 
+
+There are two main ways to represent a graph in memory: adjacency matrices and adjacency lists. If a graph is a set of n vertices and m edges (this is common notation, remember it), then an adjacency matrix is an nxn nested array where at each intersection (i,j), there is a 1 if there is an edge between those vertices, and a 0 if not (look... Binary!). 
+
+Adjacency matrices are necessary for representing dense graphs, but for sparse graphs, there is another option: the adjacency list. An adjacency list is an n-length array of linked lists, where each item in the array is a vertex i and a list of edges extending from that vertex. For sparse graphs, it is easy to see why this is a more memory-efficient implementation.
+
+When it comes to visiting every vertex in a graph, there are two supreme options, and we touched on them last week with tree traversal: depth-first search (henceforth known as DFS) and breadth-first search (BFS, from here to eternity!). We will talk first about BFS. 
+
+The main idea in traversing a graph is keeping track of every vertex that has been *discovered* and every vertex that has been *visited*. When a vertex is discovered in BFS, it is added to a queue, so that each discovered vertex can be visited in order. Recall that queues are FIFO, so at any given time, the vertex being visited will be the earliest-discovered vertex left to visit. In this sense, BFS is exactly what it sounds like: breadth-first. You first examine the entire *breadth* of the graph, i.e. each vertex that can be discovered from a given vertex, before going *deep*, i.e. examining the vertices that can be discovered from these discovered vertices. Once all the vertices connected to a vertex have been discovered, that vertex is said to be visited, and once every vertex has been visited, the algorithm completes. The pseudocode for this process is below. 
+
+``` 
+BFS(graph, start)  { //start = first vertex to discover  
+
+    let queue 
+    let v 
+    let y 
+    let edge 
+
+    queue.enqueue(start) 
+		start.discovered = true
+
+    while !queue.empty {  
+		    v = queue.dequeue 
+				visit(v) 
+				v.visited = true 
+				edge = graph -> edges[v] 
+				while edge != null { 
+				    y = edge -> y 
+						if !y.visited { 
+						    visitEdge(v,y) 
+								y.visited = true
+						} 
+						if !y.discovered { 
+						    queue.enqueue(y) 
+								y.discovered = true
+						} 
+				 } 
+				 v.visited = true
+			} 
+	 } 
+	 ``` 
+	 
+Of particular interest, notice that each vertex is marked discovered and visited accordingly. There are many different variants of BFS algorithms, but keeping track of the state of each vertex at every step of the process is common to all of them, and is vital to ensuring that the algorithm visits each vertex at most twice and terminates appropriately.  
+
+In general, BFS algorithms are useful for finding the shortest path between vertices in a graph. In a sense, BFS visits a vertex, then every vertex that is one degree of separation from that vertex, then every vertex that is two degrees of separation away, etc. So, these degrees of separation give the shortest path from a vertex to another, and this is where BFS and its derivatives shine. But, when it comes to actually visiting every vertex in a graph, DFS is often a better alternative, and we will soon see why. 
+
+DFS is, on the surface, extremely similar to BFS. In fact, it could be said that DFS is BFS with a stack instead of a queue. In practice, however, DFS can be implemented using a clean, recursive approach, not requiring a stack, and this is almost always the preferred implementation. Fundamentally, DFS is the process of discovering a node, discovering every node that can be reached from that node, then backtracking to visit the nodes discovered along the way. Intuitively, this sounds recursive, and it is easy to picture this as a recursive algorithm. It is also easy to see why this is "depth-first": we first go as *deep* as we can visiting one vertex, then when we reach the bottom, as far as the vertex's extended family will take us, we backtrack and go as deep as we can on the next vertex. This process of backtracking ensures that the next vertex visited will be the last one discovered, which is why DFS corresponds to a LIFO stack, not a FIFO queue. The pseudocode for DFS is below. 
+
+```
+
+DFS(graph, v) { 
+    
+		let edge 
+		let y  
+		
+		if finished return 
+		
+		v.discovered = true 
+		visit(v) 
+		
+		edge = graph -> edges[v] 
+		
+		while edge != null { 
+		   y = edge -> y 
+			
+			if !y.discovered { 
+			    y.discovered = true
+			     visitEdge(v,y) 
+					 DFS(graph, y) 
+			} 
+			
+			else if !y.visited {  
+			     visitEdge(v,y)  
+			} 
+			
+			if finished return 
+		} 
+		
+		v.visited = true 
+} 
+``` 
+
+Obviously, DFS will visit the vertices in a different order than BFS. Both algorithms take O(n+m) time, again, where n is the set of vertices and m is the set of edges. However, with various optimizations, DFS is generally faster at visiting all vertices than BFS. 
+
+There are many other graph algorithms, but most are not vital for entry-level developers to have memorized. In particular, two variations of BFS that allow you to find the shortest path in a weighted graph, Dijkstra's algorithm and the Bellman-Ford algorithm, are worth being conversant in. But the general DFS and BFS algorithms are far more important. Familiarize yourself with them. Understand them. Be able to implement them in your sleep. The differences between the two are subtle, but they are important. Begin to build your intuition about when to use one or the other. 
+
+Okay, that's enough. Today's word of wisdom come to us from author Richard Bach -
+
+"What the caterpillar calls the end of the world, the master calls a butterfly" 
+
+Thanks for reading. Til next time!
+			    
+					 
+
+
+
+    
