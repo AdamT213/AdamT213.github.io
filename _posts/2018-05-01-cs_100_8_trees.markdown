@@ -1,13 +1,13 @@
 ---
 layout: post
 title:      "CS 100.8: Trees"
-date:       2018-05-02 02:27:29 +0000
+date:       2018-05-01 22:27:30 -0400
 permalink:  cs_100_8_trees
 ---
 
 
 Today marks the beginning of a two-part series on graphs, starting with a special type of graph, and perhaps the most common one in interview-style problems, the tree. Trees are a hierarchical data structure, meaning that data is arranged in a parent-child relationship. You are, doubtless, familiar with various kinds of trees, as they are a common way to visualize relationships in the real world. A family tree, a corporation with all its subcomponents and employees, or, for a more to-the-point example, the file tree in your computer, all represent data as a tree, in which a root node points to its child nodes, which point to their child nodes, and so on and so forth. For all my Windows users (Woot Woot! Go Windows!), you have probably at some point had to manipulate your hosts file, which lives at the path C:\WINDOWS\system32\drivers\etc\hosts. To help visualize, here is the same thing, written in tree form. 
-
+```
  C: 
   |  
 	\Windows 
@@ -19,36 +19,36 @@ Today marks the beginning of a two-part series on graphs, starting with a specia
 	\etc 
 	| 
 	\hosts
-
+```
 
 
 In this tree, /hosts is the direct *child* of /etc, which is the *parent* of /hosts. /system32 is an *ancestor* to both of these *nodes*, and they are both its *descendants*. C: is the *root*, i.e. it has no parent, and /hosts is a *leaf*, i.e. it has no children. All other nodes are *inner nodes*, i.e. they have both parent and child nodes. The *height* of a tree refers to how many *levels* it has, in the case of our file tree leading to our hosts file, 6. The *level* of a given node is 1 + the number of *edges* between it and the root, so the root node is at level 1, /hosts is at level 6, etc. The *size* is the amount of nodes in the tree, which in this case is simply the height, since each node has one child, but it not uncommon for  a node to have multiple child nodes, as in a family tree, like this famous example: 
-
+```
            Root
 						  /\
 Homer Marge  
       \              /
 Bart Lisa Maggie  
-
+```
 (Someone much more familiar with the Simpsons than me could extend the tree upwards, I'm quite sure, but I must confess that I've probably seen <10 episodes in my life. Don't hate me)
 
 
 
 What, then is the definition of a tree? A recursive definition explains a tree as either empty, or a node with a key and a list of child nodes, the pseudocode for which looks like this: 
-
+```
 const tree(node) 
    if node.nil 
 	    return empty 
 	 else 
 	     return node.key, tree(child) for child in node.children 
-			 
+	```		 
 We will talk more about graphs next week, so I don't want to get into too much detail about them, but a graph is a set of edges and vertices, which we more commonly think of as lines and points. In this sense, each node in a tree is a vertex, and each pointer to a child node is an edge. Trees can also have pointers to parent nodes, but this is a less common implementation. In particular, trees are a kind of *Directed Acyclic Graph* (DAG), meaning that they can only be traversed in one direction, and they do not have cycles, i.e., there is no way to traverse from a node back to itself. In practice, this means that various operations on trees, including traversal, are much simpler than for general graphs, as we will explore shortly, and this will become crystal clear when we look at the equivalent processes for general graphs next week.
 			 
 			 
 Trees are a very common data structure, because they are a good compromise between some of the strengths and weaknesses of other common data structures. There are various kinds of trees, including heaps, which can be thought of as arrays represented as trees, plain ol' trees, and the type that we will focus on for the remainder of today's examples ( and by far the most common type in interview problems): binary search trees. Note that, while I will only focus on examples using binary search trees, most of the procedures outlined below, including all of the traversal methods, work the same way on all other trees.
 
 Binary search trees are a type of binary tree. Binary trees are a tree that maintain the invariant that each node has a max of two child nodes (hence binary). Binary search trees maintain the additional invariant that all nodes in a given node's left subtree are less than or equal to the node, and all nodes in its right subtree are greater.  Thus, the following tree is a binary search tree: 
-
+```
              4 
 						 /\
 					3    7
@@ -56,9 +56,9 @@ Binary search trees are a type of binary tree. Binary trees are a tree that main
 				2     5 
 				 \
 				  3 
-					
+		```		
 But, the following tree is not...: 
-
+```
             12 
 						  /\ 
 						4 16 
@@ -66,11 +66,11 @@ But, the following tree is not...:
 					 1	5  20 
 					       \ 
 								 13 
-
+```
 ... although it is a binary tree. Make sure you understand why.   
 
 Finding a given node in a BST is a lot like performing binary search on a sorted array, and runs in O(log n) time, similarly. Simply start from the root, going left and right as needed until the node is found. If the node is not found, the process for inserting is simple, and inserted nodes will always be leaf nodes. The pseudocode for this process is below. 
-
+```
 findNode(node, root)  
     if node == root  or root == nil
 		    return 
@@ -88,9 +88,9 @@ findNode(node, root)
 						 else 
 						    nextNode.right = node 
 			return  
-			
+	```		
 The process for deleting a leaf node is also quite simple, and also O(log n). Just find the node and delete it. Deleting a node with one child is similar, and involves setting the child node's parent to be the parent of the deleted node. This process is shown below. 
-
+```
 deleteNodeWithOneChild(node, root)  
     if root == nil
 		    return 
@@ -106,10 +106,10 @@ deleteNodeWithOneChild(node, root)
 			    nextNode.left = node.child (left or right) 
 		 else 
 		    nextNode.right = node.child (left or right) 
-				
+		```		
 The process for deleting a node with two children is slightly more complex, and involves replacing the node you wish to delete with its *successor*, i.e. the node in the tree that is one larger. Since the successor is the next largest node, every remaining node smaller than the deleted node must be smaller than the successor, and every remaining node bigger then the deleted node must be bigger than the successor, so it can occupy the same position in the tree. The pseudocode for this operation looks like this: 
 
-
+```
 deleteNodeWithTwoChildren(node, root)  
     if root == nil
 		    return 
@@ -133,14 +133,14 @@ findNodeBeforeSuccessor(node)
 		while greaterNode.left
 		    greaterNode = greaterNode.left 
 		return greaterNode 
-		
+	```	
 As you can see, binary search trees make finding, adding, and deleting nodes fairly simple. 
 
 There are a couple of main ways to traverse a BST, namely pre-order traversal, in-order traversal and post-order traversal. There is also another way to traverse, know as level-order traversal, but since it maintains a queue of all discovered nodes, it has O(n) space complexity in the worst case, and is thus not a good option. Level-order traversal is a breadth-first algorithm, whereas the other three are depth-first algorithms. I will further explain what this means when we discuss graphs next week, but for now, it is a useful tidbit to keep in the back of your mind. 
 
 In general, the three depth-first traversals involve visiting the root, its entire left subtree, and its entire right subtree. 
 Starting with the root, visiting its left subtree, and then visiting its right subtree is Preorder traversal. Starting with the left subtree, then visiting the root, then visiting the right subtree is known as Inorder traversal, which makes sense, since we are visiting all the nodes in ascending order. Visiting the left subtree, then the right subtree, then the root, is known as Postorder traversal. Again, we will discuss in more detail next week what it means to *visit* or *discover* a vertex in  a graph, but for now, know that the goal of a traversal is to visit every node. The pseudocode for each of our depth-first traversals is below. 
-
+```
 preorderTrav(root) 
     if root == null 
 		    return
@@ -162,7 +162,7 @@ postorderTrav(root)
 		postorderTrav(root.left) 
 		postorderTrav(root.right)
 		visit(root)  
-		
+```		
 As you can see, depth-first searching algorithms lend themselves well to recursion. Keep this in mind when we talk about ways to traverse a general graph next week. Indeed, it is important to remember that trees are a simple case of a graph. When you want to think about how a process works in a graph, think about a similar process in a tree, and it may make the problem easier to visualize.  
 
 Okay, that's enough for today! I found these words of wisdom on the personal blog of another programmer, and they resonated with me so much, I had to find out where they originated. Turns out, this quote comes from a paper called *The importance of stupidity in scientific research*, originally published in the Journal of Cell Science by UVA microbiology professor Martin A. Schwartz  - 
