@@ -88,7 +88,7 @@ findNode(node, root)
 						 else 
 						    nextNode.right = node 
 			return  
-	```		
+```		
 The process for deleting a leaf node is also quite simple, and also O(log n). Just find the node and delete it. Deleting a node with one child is similar, and involves setting the child node's parent to be the parent of the deleted node. This process is shown below. 
 ```
 deleteNodeWithOneChild(node, root)  
@@ -106,7 +106,7 @@ deleteNodeWithOneChild(node, root)
 			    nextNode.left = node.child (left or right) 
 		 else 
 		    nextNode.right = node.child (left or right) 
-		```		
+```		
 The process for deleting a node with two children is slightly more complex, and involves replacing the node you wish to delete with its *successor*, i.e. the node in the tree that is one larger. Since the successor is the next largest node, every remaining node smaller than the deleted node must be smaller than the successor, and every remaining node bigger then the deleted node must be bigger than the successor, so it can occupy the same position in the tree. The pseudocode for this operation looks like this: 
 
 ```
@@ -133,7 +133,7 @@ findNodeBeforeSuccessor(node)
 		while greaterNode.left
 		    greaterNode = greaterNode.left 
 		return greaterNode 
-	```	
+```	
 As you can see, binary search trees make finding, adding, and deleting nodes fairly simple. 
 
 There are a couple of main ways to traverse a BST, namely pre-order traversal, in-order traversal and post-order traversal. There is also another way to traverse, know as level-order traversal, but since it maintains a queue of all discovered nodes, it has O(n) space complexity in the worst case, and is thus not a good option. Level-order traversal is a breadth-first algorithm, whereas the other three are depth-first algorithms. I will further explain what this means when we discuss graphs next week, but for now, it is a useful tidbit to keep in the back of your mind. 
