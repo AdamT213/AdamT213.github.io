@@ -1,7 +1,7 @@
 ---
 layout: post
 title:      "Handling CSV File Upload and Parsing in Node.js"
-date:       2018-08-28 06:23:26 +0000
+date:       2018-08-28 02:23:27 -0400
 permalink:  handling_csv_file_upload_and_parsing_in_node_js
 ---
 
@@ -101,7 +101,7 @@ In order to access the file inside the route, you will need to set a temporary d
 Okay, now to actually use it in a route. The code for doing so looks like this: 
 
 ```
-app.post('/distributor/:id/upload', upload.single('file'), function (err, req, res, next ) { 
+app.post('/some_route/upload', upload.single('file'), function (err, req, res, next ) { 
   
   if (err) { 
     console.log(req);
@@ -113,7 +113,7 @@ app.post('/distributor/:id/upload', upload.single('file'), function (err, req, r
 }, function (req, res, next) {  
 ``` 
 
-Our multer instance can be passed* single*, as above, indicating that we expect a single file with the fieldname specified in our frontend code above, *array*, indicating that we expect an array of files all with the fieldname specified, 
+Our multer instance can be passed *single*, as above, indicating that we expect a single file with the fieldname specified in our frontend code above, *array*, indicating that we expect an array of files all with the fieldname specified, 
 *fields*, indicating that we expect a bunch of different files with different specified fieldnames, *none*, indicating that we expect only text field, or *any*, indicating that we will accept any mix, maxCount,  and type of files that may come. If we specify multer.single(), we will get the file stored in a req.file object. Otherwise, it will be stored in a req.files object. 
 
 So that's it, super simple, and now we have the file in req.file, ready to be referenced in the next() route. 
